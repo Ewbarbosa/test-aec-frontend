@@ -1,0 +1,25 @@
+.input {
+  height: 35px;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  color: var(--white);
+
+  border: 1px solid var(--silver);
+  background-color: var(--silver2);
+
+  text-align: center;
+}
+
+.input::placeholder {
+  color: var(--silver);  
+}
+
+.input[type=number]::-webkit-inner-spin-button { 
+  -webkit-appearance: none;
+  }
+  
+  .input[type=number] { 
+  -moz-appearance: textfield;
+  appearance: textfield;
+  }
