@@ -6,6 +6,8 @@ import Input from "@/components/Input/page";
 
 import { FormEvent } from "react";
 
+import Link from "next/link";
+
 export default function Home() {
 
   async function handleLogin(event: FormEvent) {
@@ -38,6 +40,7 @@ export default function Home() {
           Entrar
         </button>
       </form>
+      <Link href="/register">Cadastre-se</Link>
 
     </div>
   );
