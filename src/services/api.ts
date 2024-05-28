@@ -1,10 +1,10 @@
-import axios, { Axios, AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 
 import { parseCookies } from 'nookies';
 
 import { AuthTokenError } from './errors/AuthTokenError';
 
-import { signOut } from '@/contexts/AuthContext';
+import { signOut } from '@/contexts/AuthContext'; 
 
 export function setupAPIClient(ctx?: undefined) {
 
@@ -21,9 +21,9 @@ export function setupAPIClient(ctx?: undefined) {
   api.interceptors.response.use(response => {
     return response;
   }, (err: AxiosError) => {
-    if(err.response?.status === 401){
+    if (err.response?.status === 401) {
       // erro 401 deve deslogar o usuário
-      if(typeof window !== undefined){
+      if (typeof window !== undefined) {
         // chama a funcao para deslogar
         signOut();
       } else {

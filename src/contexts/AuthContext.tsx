@@ -2,11 +2,12 @@
 
 import { api } from '@/services/apiClient';
 
-import { createContext, ReactNode, useState } from 'react';
+import { createContext, ReactNode, useState, useEffect } from 'react';
 
 import { useRouter } from 'next/navigation';
+import Router from 'next/router';
 
-import { destroyCookie, setCookie } from 'nookies';
+import { destroyCookie, parseCookies, setCookie } from 'nookies';
 
 type AuthContextData = {
   user?: UserProps;
@@ -32,6 +33,16 @@ type AuthProviderProps = {
 
 export const AuthContext = createContext({} as AuthContextData);
 
+// destroi o cookie armazenado e redireciona para a rota inicial
+export function signOut() {
+  try {
+    destroyCookie(undefined, '@aec.token');
+    Router.push('/');
+  } catch (err) {
+    console.log("erro ao deslogars");
+  }
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
 
   const router = useRouter();
@@ -39,20 +50,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserProps>();
   const isAuthenticated = !!user;
 
-  // destroi o cookie armazenado e redireciona para a rota inicial
-  function signOut() {
-    try {      
-      destroyCookie(undefined, '@aec.token');
-      router.push('/')
-    } catch (err) {
-      console.log("erro ao deslogar");
+  useEffect(() => {
+
+    const { '@aec.token': token } = parseCookies();
+
+    if (token) {
+      api.get('/me').then(response => {
+        const { id, name, email } = response.data;
+
+        setUser({
+          id,
+          name,
+          email
+        })
+      })
+        .catch(() => {
+          // se deu erro deloga
+          signOut();
+        })
     }
-  }
+
+  }, [])
 
   // faz uma requisição na api pra validar usuário e senha
   // se o retorno da api for 200 será salvo o token recebido
   // e no final redireciona para a HOME
   async function signIn({ email, password }: SignProps) {
+
     try {
 
       const res = await api.post('/login', {
@@ -76,10 +100,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // passa para as proximas requisições o token
       api.defaults.headers['Authorization'] = `Bearer ${token}`
 
-      router.push('/home');
+      router.push('/dashboard');
 
     } catch (err) {
-      console.log(err)
+      alert('Usuário ou senha inválido. Tente novamente.');
     }
   }
 

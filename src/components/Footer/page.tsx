@@ -6,20 +6,26 @@ import { IoMdAddCircle, IoMdHome, IoMdExit } from "react-icons/io";
 
 import { useRouter } from 'next/navigation';
 
-import { useContext } from 'react';
-import { AuthContext } from "@/contexts/AuthContext";
+import { destroyCookie } from 'nookies';
 
 export default function Footer() {
 
-  const { signOut } = useContext(AuthContext);
-
   const router = useRouter();
+
+  function signOut() {
+    try {
+      destroyCookie(undefined, '@aec.token');
+      router.push('/');
+    } catch (err) {
+      console.log("erro ao deslogar");
+    }
+  }
 
   return (
     <footer className={styles.footer}>
       <IoMdAddCircle size={30} onClick={() => router.push('/address')} />
-      <IoMdHome size={30} onClick={() => router.push('/home')} />
-      <IoMdExit size={30} onClick={signOut}/>
+      <IoMdHome size={30} onClick={() => router.push('/dashboard')} />
+      <IoMdExit size={30} onClick={signOut} />
     </footer>
   )
 }
