@@ -10,6 +10,7 @@ export default function Dashboard() {
       <Header />
 
       <div className={styles.container}>
+        <h3>Minha lista de endereços</h3>
         <Card />
       </div>
 

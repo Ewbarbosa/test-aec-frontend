@@ -10,26 +10,53 @@ import { useEffect } from 'react'
 
 import { api } from '@/services/apiClient';
 
+import { jsonToCsv } from "@/utils/jsonToCsv";
+
+import * as XLSX from "xlsx"; 
+
+import { useRouter } from 'next/navigation';
+
 export default function Card() {
 
-  const { address, getAddress } = useAddressSotre();  
+  const router = useRouter();
+
+  const { address, getAddress } = useAddressSotre();
+
+  useEffect(() => {
+
+    getAddress()
+
+  }, [getAddress]);
 
   async function handleDelete(id: number) {
-
     try {
 
       const res = await api.delete('/address', {
         data: { id: id }
       })
 
-      alert('Endereço excluído com sucesso!');
+      if (res.status === 200) {
+        alert('Endereço excluído com sucesso!');
 
-      getAddress();
+        getAddress();
+      }
 
     } catch {
       alert('Erro ao excluir');
     }
+  }
 
+  function exportData() {
+    jsonToCsv(address, 'arquivo.csv');
+  }
+
+  function exportDataNew(){
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils?.json_to_sheet(address);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Lista de endereços');
+
+    XLSX.writeFile(workbook, `enderecos.xlsx`);
   }
 
   return (
@@ -42,6 +69,8 @@ export default function Card() {
           <h3>Nenhum registro encontrado</h3>
         }
 
+        <button onClick={exportDataNew}>Exportar para Excel</button>
+
         {address.map(item => (
           <div className={styles.card} key={item.id}>
             <h3>#{item.id}</h3>
@@ -53,7 +82,7 @@ export default function Card() {
             <h3>Estado: {item.state}</h3>
 
             <div className={styles.options}>
-              <MdEdit size={25} />
+              <MdEdit size={25} onClick={() => router.push('/address/' + item.id)} />
               <MdDelete size={25} onClick={() => handleDelete(item.id)} />
             </div>
 

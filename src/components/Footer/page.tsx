@@ -14,7 +14,7 @@ export default function Footer() {
 
   function signOut() {
     try {
-      destroyCookie(undefined, '@AeCAuth.token');
+      destroyCookie(null, '@AeCAuth.token');
       router.push('/');
     } catch (err) {
       console.log("erro ao deslogar");
