@@ -6,18 +6,25 @@ import Header from "@/components/Header/page";
 import Footer from "@/components/Footer/page";
 import Input from "@/components/Input/page";
 
-import { FormEvent, useState, ChangeEvent, useContext } from 'react';
+import { useAddressSotre } from '@/store/address';
+
+import { FormEvent, useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { AuthContext } from '@/contexts/AuthContext';
-
 import { api } from '@/services/apiClient';
+import axios from 'axios';
 
 import { parseCookies } from 'nookies';
 
 export default function Address() {
 
-  const { user } = useContext(AuthContext);
+  const { getAddress } = useAddressSotre();
+
+  useEffect(() => {
+
+    getAddress();
+
+  }, [getAddress]);
 
   const [street, setStreet] = useState('');
   const [complement, setComplement] = useState('');
@@ -30,14 +37,14 @@ export default function Address() {
   async function handleSave(event: FormEvent) {
     event.preventDefault();
 
-    const { '@aec.token': token } = parseCookies();
+    const { '@AeCAuth.token': token } = parseCookies();
 
     if (token) {
       api.get('/me').then(response => {
         const { id, name, email } = response.data;
 
         setUser_id(id);
-        
+
       })
         .catch(() => {
           // se deu erro deloga          
@@ -74,7 +81,29 @@ export default function Address() {
     }
   }
 
+  const apiCep = axios.create({
+    baseURL: 'https://viacep.com.br/ws/'
+  })
+
+  const handleCep = async (event: ChangeEvent<HTMLInputElement>) => {
+    const novoCep = event.target.value;
+    setZip_code(novoCep);
+
+    if (novoCep.length === 8) {
+      const res = await apiCep.get(novoCep + '/json');
+
+      const data = res.data;
+
+      setStreet(data.logradouro);
+      setZip_code(data.cep);
+      setDistrict(data.bairro);
+      setCity(data.localidade);
+      setState(data.uf);
+    }
+  }
+
   const router = useRouter();
+
   return (
     <>
       <Header />
@@ -94,7 +123,7 @@ export default function Address() {
           />
           <Input
             value={zip_code}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setZip_code(e.target.value)}
+            onChange={handleCep}
             placeholder="CEP"
           />
           <Input
@@ -118,9 +147,13 @@ export default function Address() {
           </button>
         </form>
 
-        <button className={styles.button} onClick={() => router.push('/')}>
+        <button className={styles.button} onClick={() => {
+          router.push('/');
+          getAddress();
+        }}>
           Voltar
         </button>
+
       </div>
 
       <Footer />

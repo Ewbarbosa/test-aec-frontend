@@ -4,16 +4,14 @@ import { api } from '@/services/apiClient';
 
 import { createContext, ReactNode, useState, useEffect } from 'react';
 
-import { useRouter } from 'next/navigation';
-import Router from 'next/router';
+import { useRouter, redirect } from 'next/navigation';
 
 import { destroyCookie, parseCookies, setCookie } from 'nookies';
 
 type AuthContextData = {
   user?: UserProps;
   isAuthenticated: boolean;
-  signIn: (credentials: SignProps) => Promise<void>;
-  signOut: () => void;
+  signIn: (credentials: SignProps) => Promise<void>;  
 }
 
 type UserProps = {
@@ -33,13 +31,12 @@ type AuthProviderProps = {
 
 export const AuthContext = createContext({} as AuthContextData);
 
-// destroi o cookie armazenado e redireciona para a rota inicial
-export function signOut() {
-  try {
-    destroyCookie(undefined, '@aec.token');
-    Router.push('/');
-  } catch (err) {
-    console.log("erro ao deslogars");
+export function signOut(){  
+  try{
+    destroyCookie(undefined, '@AeCAuth.token');
+    redirect('/');
+  } catch(erro) {
+    console.log('Erro ao deslogar.: ' + erro);
   }
 }
 
@@ -52,7 +49,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
 
-    const { '@aec.token': token } = parseCookies();
+    // recupera o token armazenado
+    const { '@AeCAuth.token': token } = parseCookies();    
 
     if (token) {
       api.get('/me').then(response => {
@@ -86,7 +84,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const { id, name, token } = res.data;
 
-      setCookie(undefined, '@aec.token', token), {
+      setCookie(undefined, '@AeCAuth.token', token), {
         maxAge: 60 * 60 * 24, //expirar em um dia
         path: '/'
       };
@@ -108,7 +106,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, signIn }}>
       {children}
     </AuthContext.Provider>
   )

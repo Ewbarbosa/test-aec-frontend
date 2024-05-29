@@ -14,7 +14,7 @@ export default function Footer() {
 
   function signOut() {
     try {
-      destroyCookie(undefined, '@aec.token');
+      destroyCookie(undefined, '@AeCAuth.token');
       router.push('/');
     } catch (err) {
       console.log("erro ao deslogar");
@@ -25,7 +25,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <IoMdAddCircle size={30} onClick={() => router.push('/address')} />
       <IoMdHome size={30} onClick={() => router.push('/dashboard')} />
-      <IoMdExit size={30} onClick={signOut} />
+      <IoMdExit size={30}  onClick={() => signOut()}/>
     </footer>
   )
 }

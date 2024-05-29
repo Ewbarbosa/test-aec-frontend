@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export default function middleware(req: NextRequest) {
 
-  const token = req.cookies.get('@aec.token')?.value;  
+  const token = req.cookies.get('@AeCAuth.token')?.value;  
 
   const signInURL = new URL('/', req.url);
   const dashboardURL = new URL('/dashboard', req.url);

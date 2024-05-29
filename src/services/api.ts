@@ -4,8 +4,6 @@ import { parseCookies } from 'nookies';
 
 import { AuthTokenError } from './errors/AuthTokenError';
 
-import { signOut } from '@/contexts/AuthContext'; 
-
 export function setupAPIClient(ctx?: undefined) {
 
   let cookies = parseCookies(ctx);
@@ -13,7 +11,7 @@ export function setupAPIClient(ctx?: undefined) {
   const api = axios.create({
     baseURL: 'http://localhost:3001',
     headers: {
-      Authorizatio: `Bearer ${cookies['@aec.token']}`
+      Authorization: `Bearer ${cookies['@AeCAuth.token']}`
     }
 
   })
@@ -24,8 +22,7 @@ export function setupAPIClient(ctx?: undefined) {
     if (err.response?.status === 401) {
       // erro 401 deve deslogar o usuário
       if (typeof window !== undefined) {
-        // chama a funcao para deslogar
-        signOut();
+        // chama a funcao para deslogar        
       } else {
         return Promise.reject(new AuthTokenError())
       }
