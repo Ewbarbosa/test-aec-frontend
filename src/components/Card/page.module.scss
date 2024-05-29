@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  border-radius: 8px;  
+  border-radius: 8px;
 }
 
 .card {
@@ -33,15 +33,32 @@
 .options {
   width: 100%;
   display: flex;
-  align-items: center;  
+  align-items: center;
   justify-content: space-evenly;
-  
+
   svg {
     cursor: pointer;
     transition: all 0.2s;
 
-    &:hover{
+    &:hover {
       transform: scale(1.15);
     }
+  }
+}
+
+.btExport {
+  width: 150px;
+  height: 30px;
+  border-radius: 8px;
+  border: none;
+  margin: 8px 0;
+  background-color: var(--pink);
+  color: var(--white);
+  border: 2px solid var(--white);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
   }
 }

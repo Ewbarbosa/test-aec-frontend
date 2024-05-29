@@ -10,9 +10,7 @@ import { useEffect } from 'react'
 
 import { api } from '@/services/apiClient';
 
-import { jsonToCsv } from "@/utils/jsonToCsv";
-
-import * as XLSX from "xlsx"; 
+import * as XLSX from "xlsx";
 
 import { useRouter } from 'next/navigation';
 
@@ -46,11 +44,7 @@ export default function Card() {
     }
   }
 
-  function exportData() {
-    jsonToCsv(address, 'arquivo.csv');
-  }
-
-  function exportDataNew(){
+  function exportDataNew() {
 
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils?.json_to_sheet(address);
@@ -69,7 +63,7 @@ export default function Card() {
           <h3>Nenhum registro encontrado</h3>
         }
 
-        <button onClick={exportDataNew}>Exportar para Excel</button>
+        <button className={styles.btExport} onClick={exportDataNew}>Exportar para Excel</button>
 
         {address.map(item => (
           <div className={styles.card} key={item.id}>
